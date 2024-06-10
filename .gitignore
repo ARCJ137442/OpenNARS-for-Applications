@@ -11,3 +11,12 @@ NAR.dSYM/
 # For Clangd
 .cache/
 compile_commands.json
+
+# For VSCode
+.vscode/
+
+# zig
+.zig-cache/
+
+# ignored
+.ignored/
