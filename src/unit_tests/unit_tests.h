@@ -32,7 +32,7 @@
 #include "Stack_Test.h"
 #include "Table_Test.h"
 #include "HashTable_Test.h"
-#include "UDP_Test.h"
+// #include "UDP_Test.h"
 
 void Run_Unit_Tests()
 {
@@ -46,5 +46,5 @@ void Run_Unit_Tests()
     RuleTable_Test();
     Stack_Test();
     HashTable_Test();
-    UDP_Test();
+    // UDP_Test();
 }

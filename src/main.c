@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2020 The OpenNARS authors.
@@ -31,91 +31,85 @@
 #include "./unit_tests/unit_tests.h"
 #include "./system_tests/system_tests.h"
 #include "Shell.h"
-#include "./NetworkNAR/UDPNAR.h"
+// #include "./NetworkNAR/UDPNAR.h"
 
 void Process_Args(int argc, char *argv[])
 {
     bool inspectionOnExit = false;
     long iterations = -1;
-    if(argc >= 4)
+    if (argc >= 4)
     {
-        if(!strcmp(argv[3],"InspectionOnExit"))
+        if (!strcmp(argv[3], "InspectionOnExit"))
         {
             inspectionOnExit = true;
         }
     }
-    if(argc >= 3)
+    if (argc >= 3)
     {
-        if(!strcmp(argv[2],"InspectionOnExit"))
+        if (!strcmp(argv[2], "InspectionOnExit"))
         {
             inspectionOnExit = true;
         }
     }
-    if(argc >= 2)
+    if (argc >= 2)
     {
         NAR_INIT();
-        if(!strcmp(argv[1],"NAL_GenerateRuleTable"))
+        if (!strcmp(argv[1], "NAL_GenerateRuleTable"))
         {
             NAL_GenerateRuleTable();
             exit(0);
         }
-        if(!strcmp(argv[1],"shell"))
+        if (!strcmp(argv[1], "shell"))
         {
             Shell_Start();
         }
-        for(int i=1; i<argc; i++)
+        for (int i = 1; i < argc; i++)
         {
-            iterations = i+1 < argc ? atol(argv[i+1]) : -1;
-            if(!strcmp(argv[i],"pong"))
+            iterations = i + 1 < argc ? atol(argv[i + 1]) : -1;
+            if (!strcmp(argv[i], "pong"))
             {
                 NAR_Pong(iterations);
             }
-            else
-            if(!strcmp(argv[i],"pong2"))
+            else if (!strcmp(argv[i], "pong2"))
             {
                 NAR_Pong2(iterations);
             }
-            else
-            if(!strcmp(argv[i],"testchamber"))
+            else if (!strcmp(argv[i], "testchamber"))
             {
                 NAR_TestChamber();
             }
-            else
-            if(!strcmp(argv[i],"alien"))
+            else if (!strcmp(argv[i], "alien"))
             {
                 NAR_Alien(iterations);
             }
-            else
-            if(!strcmp(argv[i],"cartpole"))
+            else if (!strcmp(argv[i], "cartpole"))
             {
                 NAR_Cartpole(iterations);
             }
-            else
-            if(!strcmp(argv[i],"robot"))
+            else if (!strcmp(argv[i], "robot"))
             {
                 NAR_Robot(iterations);
             }
-            else
-            if(!strcmp(argv[i],"bandrobot"))
+            else if (!strcmp(argv[i], "bandrobot"))
             {
                 NAR_Bandrobot(iterations);
             }
         }
-        if(!strcmp(argv[1],"UDPNAR")) // ./NAR UDPNAR IP PORT timestep(ns per cycle) printDerivations
-        {
-            char *ip = argv[2];
-            int port = atoi(argv[3]);
-            long timestep = atol(argv[4]);
-            bool printDerivations = !strcmp("true", argv[5]);
-            PRINT_DERIVATIONS = printDerivations;
-            UDPNAR_Start(ip, port, timestep);
-            puts("//press any key and enter to quit!");
-            fflush(stdout);
-            getchar();
-            UDPNAR_Stop();
-        }
+        // if(!strcmp(argv[1],"UDPNAR")) // ./NAR UDPNAR IP PORT timestep(ns per cycle) printDerivations
+        // {
+        //     char *ip = argv[2];
+        //     int port = atoi(argv[3]);
+        //     long timestep = atol(argv[4]);
+        //     bool printDerivations = !strcmp("true", argv[5]);
+        //     PRINT_DERIVATIONS = printDerivations;
+        //     UDPNAR_Start(ip, port, timestep);
+        //     puts("//press any key and enter to quit!");
+        //     fflush(stdout);
+        //     getchar();
+        //     UDPNAR_Stop();
+        // }
     }
-    if(inspectionOnExit)
+    if (inspectionOnExit)
     {
         Shell_ProcessInput("*opconfig");
         Shell_ProcessInput("*concepts");
@@ -127,7 +121,7 @@ void Process_Args(int argc, char *argv[])
 
 void Display_Help()
 {
-    puts("\nAll C tests ran successfully, run python3 evaluation.py for more comprehensive evaluation!"); 
+    puts("\nAll C tests ran successfully, run python3 evaluation.py for more comprehensive evaluation!");
     puts("");
     puts("Welcome to `OpenNARS for Applications`!");
     puts("```````````````````````````````````````");
@@ -156,7 +150,7 @@ int main(int argc, char *argv[])
     mysrand(666);
 #endif
     Process_Args(argc, argv);
-    if(argc == 1)
+    if (argc == 1)
     {
         NAR_INIT();
         Run_Unit_Tests();
