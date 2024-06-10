@@ -2376,6 +2376,10 @@ pub const int_fast64_t = c_longlong;
 pub const uint_fast64_t = c_ulonglong;
 pub const intmax_t = c_longlong;
 pub const uintmax_t = c_ulonglong;
+
+// * 正式开始 * //
+
+// Truth
 pub const Truth = extern struct {
     frequency: f64 = @import("std").mem.zeroes(f64),
     confidence: f64 = @import("std").mem.zeroes(f64),
@@ -2415,6 +2419,8 @@ pub extern fn Truth_AnonymousAnalogy(v1: Truth, v2: Truth) Truth;
 pub extern fn Truth_FrequencyGreater(v1: Truth, v2: Truth) Truth;
 pub extern fn Truth_FrequencyEqual(v1: Truth, v2: Truth) Truth;
 pub extern fn Truth_Equal(v1: [*c]Truth, v2: [*c]Truth) bool;
+
+// Term
 pub const Term = extern struct {
     hashed: bool = @import("std").mem.zeroes(bool),
     hash: c_long = @import("std").mem.zeroes(c_long),
@@ -2429,12 +2435,16 @@ pub extern fn Term_HasAtom(term: [*c]Term, atom: c_ushort) bool;
 pub const Stamp = extern struct {
     evidentalBase: [10]c_long = @import("std").mem.zeroes([10]c_long),
 };
+
+// Stamp
 pub extern fn Stamp_make(stamp1: [*c]Stamp, stamp2: [*c]Stamp) Stamp;
 pub extern fn Stamp_checkOverlap(a: [*c]Stamp, b: [*c]Stamp) bool;
 pub extern fn Stamp_Equal(a: [*c]Stamp, b: [*c]Stamp) bool;
 pub extern fn Stamp_print(stamp: [*c]Stamp) void;
 pub extern var base: c_long;
 pub extern var importstamp: Stamp;
+
+// Event
 pub const Event = extern struct {
     term: Term = @import("std").mem.zeroes(Term),
     type: u8 = @import("std").mem.zeroes(u8),
@@ -2451,6 +2461,8 @@ pub extern fn Event_InputEvent(term: Term, @"type": u8, truth: Truth, occurrence
 pub extern fn Event_Equal(event: [*c]Event, existing: [*c]Event) bool;
 pub extern fn Event_EqualTermEqualStampLessConfidentThan(event: [*c]Event, existing: [*c]Event) bool;
 pub extern fn Event_Eternalized(event: [*c]Event) Event;
+
+// Narsese
 pub extern var Narsese_atomValues: [65536]f64;
 pub extern var Narsese_atomHasValue: [65536]bool;
 pub extern var Narsese_atomMeasurementNames: [65536][32]u8;
@@ -2499,6 +2511,8 @@ pub const Substitution = extern struct {
     truth: Truth = @import("std").mem.zeroes(Truth),
 };
 pub const SimilarityQuery = ?*const fn (Truth, [*c]Term, [*c]Term) callconv(.C) Truth;
+
+// Variable
 pub extern var Variable_similarity_distance: f64;
 pub extern fn Variable_isIndependentVariable(atom: c_ushort) bool;
 pub extern fn Variable_isDependentVariable(atom: c_ushort) bool;
@@ -2512,6 +2526,8 @@ pub extern fn Variable_ApplySubstitute(term: Term, substitution: Substitution, s
 pub extern fn Variable_IntroduceImplicationVariables(implication: Term, success: [*c]bool, extensionally: bool) Term;
 pub extern fn Variable_IntroduceConjunctionVariables(conjunction: Term, success: [*c]bool, extensionally: bool) Term;
 pub extern fn Variable_Normalize(term: [*c]Term) void;
+
+// Inference
 pub extern fn Inference_EventUpdate(ev: [*c]Event, currentTime: c_long) Event;
 pub extern fn Inference_BeliefIntersection(a: [*c]Event, b: [*c]Event, success: [*c]bool) Event;
 pub extern fn Inference_BeliefInduction(a: [*c]Event, b: [*c]Event, success: [*c]bool) Implication;
@@ -2525,6 +2541,8 @@ pub const Table = extern struct {
     array: [20]Implication = @import("std").mem.zeroes([20]Implication),
     itemsAmount: c_int = @import("std").mem.zeroes(c_int),
 };
+
+// Table
 pub extern fn Table_Add(table: [*c]Table, imp: [*c]Implication) [*c]Implication;
 pub extern fn Table_Remove(table: [*c]Table, index: c_int) void;
 pub extern fn Table_AddAndRevise(table: [*c]Table, imp: [*c]Implication) [*c]Implication;
@@ -2532,6 +2550,8 @@ pub const Usage = extern struct {
     useCount: c_long = @import("std").mem.zeroes(c_long),
     lastUsed: c_long = @import("std").mem.zeroes(c_long),
 };
+
+// Usage
 pub extern fn Usage_usefulness(usage: Usage, currentTime: c_long) f64;
 pub extern fn Usage_use(usage: Usage, currentTime: c_long, eternalInput: bool) Usage;
 pub extern fn Usage_Print(usage: [*c]Usage) void;
@@ -2562,6 +2582,8 @@ pub const Stack = extern struct {
     stackpointer: c_int = @import("std").mem.zeroes(c_int),
     maxElements: c_int = @import("std").mem.zeroes(c_int),
 };
+
+// Stack
 pub extern fn Stack_INIT(stack: [*c]Stack, items: [*c]?*anyopaque, maxElements: c_int) void;
 pub extern fn Stack_Push(stack: [*c]Stack, item: ?*anyopaque) void;
 pub extern fn Stack_Pop(stack: [*c]Stack) ?*anyopaque;
@@ -2574,6 +2596,8 @@ pub extern var conceptChainElementStoragePointers: [507904][*c]ConceptChainEleme
 pub extern var conceptChainElementStorage: [507904]ConceptChainElement;
 pub extern var conceptChainElementStack: Stack;
 pub extern var invertedAtomIndex: [65536][*c]ConceptChainElement;
+
+// InvertedAtomIndex
 pub extern fn InvertedAtomIndex_INIT(...) void;
 pub extern fn InvertedAtomIndex_AddConcept(term: Term, c: [*c]Concept) void;
 pub extern fn InvertedAtomIndex_RemoveConcept(term: Term, c: [*c]Concept) void;
@@ -2583,6 +2607,8 @@ pub const Item = extern struct {
     priority: f64 = @import("std").mem.zeroes(f64),
     address: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
 };
+
+// PriorityQueue
 pub const PriorityQueue = extern struct {
     items: [*c]Item = @import("std").mem.zeroes([*c]Item),
     itemsAmount: c_int = @import("std").mem.zeroes(c_int),
@@ -2607,6 +2633,8 @@ pub const VMItem = extern struct {
     value: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
     next: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
 };
+
+// HashTable
 pub const HashTable = extern struct {
     storageptrs: [*c][*c]VMItem = @import("std").mem.zeroes([*c][*c]VMItem),
     storage: [*c]VMItem = @import("std").mem.zeroes([*c]VMItem),
@@ -2651,6 +2679,8 @@ pub extern var HTconcepts: HashTable;
 pub extern var occurrenceTimeIndex: OccurrenceTimeIndex;
 pub extern var operations: [10]Operation;
 pub extern var PRINT_EVENTS_PRIORITY_THRESHOLD: f64;
+
+// Memory
 pub extern fn Memory_INIT(...) void;
 pub extern fn Memory_FindConceptByTerm(term: [*c]Term) [*c]Concept;
 pub extern fn Memory_Conceptualize(term: [*c]Term, currentTime: c_long) [*c]Concept;
@@ -2667,6 +2697,8 @@ pub extern var ANTICIPATION_THRESHOLD: f64;
 pub extern var ANTICIPATION_CONFIDENCE: f64;
 pub extern var MOTOR_BABBLING_CHANCE: f64;
 pub extern var BABBLING_OPS: c_int;
+
+// Decision
 pub const Decision = extern struct {
     desire: f64 = @import("std").mem.zeroes(f64),
     execute: bool = @import("std").mem.zeroes(bool),
@@ -2683,18 +2715,28 @@ pub extern fn Decision_Execute(currentTime: c_long, decision: [*c]Decision) void
 pub extern fn Decision_Anticipate(operationID: c_int, op_term: Term, currentTime: c_long) void;
 pub extern fn Decision_Suggest(goalconcept: [*c]Concept, goal: [*c]Event, currentTime: c_long) Decision;
 pub extern fn Decision_BetterDecision(best_decision: Decision, decision: Decision) Decision;
+
+// NAL
 pub extern fn NAL_GenerateRuleTable(...) void;
 pub extern fn NAL_DerivedEvent(conclusionTerm: Term, conclusionOccurrence: c_long, conclusionTruth: Truth, stamp: Stamp, currentTime: c_long, parentPriority: f64, conceptPriority: f64, occurrenceTimeOffset: f64, validation_concept: [*c]Concept, validation_cid: c_long, varIntro: bool, allowOnlyExtVarIntroAndTwoIndependentVars: bool) void;
+
+// RuleTable
 pub extern fn RuleTable_Apply(term1: Term, term2: Term, truth1: Truth, truth2: Truth, conclusionOccurrence: c_long, occurrenceTimeOffset: f64, conclusionStamp: Stamp, currentTime: c_long, parentPriority: f64, conceptPriority: f64, doublePremise: bool, validation_concept: [*c]Concept, validation_cid: c_long) void;
 pub extern fn RuleTable_Reduce(term1: Term) Term;
+
+// Stats
 pub extern var Stats_countConceptsMatchedTotal: c_long;
 pub extern var Stats_countConceptsMatchedMax: c_long;
 pub extern var HTatoms: HashTable;
 pub extern fn Stats_Print(currentTime: c_long) void;
+
+// Cycle
 pub extern fn Cycle_Perform(currentTime: c_long) void;
 pub extern fn Cycle_INIT(...) void;
 pub extern var currentTime: c_long;
 pub extern var QUESTION_PRIMING: f64;
+
+// NAR
 pub extern fn NAR_INIT(...) void;
 pub extern fn NAR_Cycles(cycles: c_int) void;
 pub extern fn NAR_AddInput(term: Term, @"type": u8, truth: Truth, eternal: bool, occurrenceTimeOffset: f64) Event;
@@ -2703,6 +2745,9 @@ pub extern fn NAR_AddInputGoal(term: Term) Event;
 pub extern fn NAR_AddOperation(atomname: [*c]u8, procedure: Action) void;
 pub extern fn NAR_AddInputNarsese(narsese_sentence: [*c]u8) void;
 pub extern fn NAR_AddInputNarsese2(narsese_sentence: [*c]u8, queryCommand: bool, answerTruthExpThreshold: f64) void;
+
+// tests //
+
 pub export fn Stamp_Test() void {
     _ = puts(">>Stamp test start");
     var stamp1: Stamp = Stamp{
@@ -5956,110 +6001,8 @@ pub export fn Run_System_Tests() void {
     NAR_Multistep2_Test();
     NAR_Sequence_Test();
 }
-pub export fn Process_Args(arg_argc: c_int, arg_argv: [*c][*c]u8) void {
-    var argc = arg_argc;
-    _ = &argc;
-    var argv = arg_argv;
-    _ = &argv;
-    var inspectionOnExit: bool = @as(c_int, 0) != 0;
-    _ = &inspectionOnExit;
-    var iterations: c_long = @as(c_long, @bitCast(@as(c_long, -@as(c_int, 1))));
-    _ = &iterations;
-    if (argc >= @as(c_int, 4)) {
-        if (!(strcmp(argv[@as(c_uint, @intCast(@as(c_int, 3)))], "InspectionOnExit") != 0)) {
-            inspectionOnExit = @as(c_int, 1) != 0;
-        }
-    }
-    if (argc >= @as(c_int, 3)) {
-        if (!(strcmp(argv[@as(c_uint, @intCast(@as(c_int, 2)))], "InspectionOnExit") != 0)) {
-            inspectionOnExit = @as(c_int, 1) != 0;
-        }
-    }
-    if (argc >= @as(c_int, 2)) {
-        NAR_INIT();
-        if (!(strcmp(argv[@as(c_uint, @intCast(@as(c_int, 1)))], "NAL_GenerateRuleTable") != 0)) {
-            NAL_GenerateRuleTable();
-            exit(@as(c_int, 0));
-        }
-        if (!(strcmp(argv[@as(c_uint, @intCast(@as(c_int, 1)))], "shell") != 0)) {
-            Shell_Start();
-        }
-        {
-            var i: c_int = 1;
-            _ = &i;
-            while (i < argc) : (i += 1) {
-                iterations = if ((i + @as(c_int, 1)) < argc) atol((blk: {
-                    const tmp = i + @as(c_int, 1);
-                    if (tmp >= 0) break :blk argv + @as(usize, @intCast(tmp)) else break :blk argv - ~@as(usize, @bitCast(@as(isize, @intCast(tmp)) +% -1));
-                }).*) else @as(c_long, @bitCast(@as(c_long, -@as(c_int, 1))));
-                if (!(strcmp((blk: {
-                    const tmp = i;
-                    if (tmp >= 0) break :blk argv + @as(usize, @intCast(tmp)) else break :blk argv - ~@as(usize, @bitCast(@as(isize, @intCast(tmp)) +% -1));
-                }).*, "pong") != 0)) {
-                    NAR_Pong(iterations);
-                } else if (!(strcmp((blk: {
-                    const tmp = i;
-                    if (tmp >= 0) break :blk argv + @as(usize, @intCast(tmp)) else break :blk argv - ~@as(usize, @bitCast(@as(isize, @intCast(tmp)) +% -1));
-                }).*, "pong2") != 0)) {
-                    NAR_Pong2(iterations);
-                } else if (!(strcmp((blk: {
-                    const tmp = i;
-                    if (tmp >= 0) break :blk argv + @as(usize, @intCast(tmp)) else break :blk argv - ~@as(usize, @bitCast(@as(isize, @intCast(tmp)) +% -1));
-                }).*, "testchamber") != 0)) {
-                    NAR_TestChamber();
-                } else if (!(strcmp((blk: {
-                    const tmp = i;
-                    if (tmp >= 0) break :blk argv + @as(usize, @intCast(tmp)) else break :blk argv - ~@as(usize, @bitCast(@as(isize, @intCast(tmp)) +% -1));
-                }).*, "alien") != 0)) {
-                    NAR_Alien(iterations);
-                } else if (!(strcmp((blk: {
-                    const tmp = i;
-                    if (tmp >= 0) break :blk argv + @as(usize, @intCast(tmp)) else break :blk argv - ~@as(usize, @bitCast(@as(isize, @intCast(tmp)) +% -1));
-                }).*, "cartpole") != 0)) {
-                    NAR_Cartpole(iterations);
-                } else if (!(strcmp((blk: {
-                    const tmp = i;
-                    if (tmp >= 0) break :blk argv + @as(usize, @intCast(tmp)) else break :blk argv - ~@as(usize, @bitCast(@as(isize, @intCast(tmp)) +% -1));
-                }).*, "robot") != 0)) {
-                    NAR_Robot(iterations);
-                } else if (!(strcmp((blk: {
-                    const tmp = i;
-                    if (tmp >= 0) break :blk argv + @as(usize, @intCast(tmp)) else break :blk argv - ~@as(usize, @bitCast(@as(isize, @intCast(tmp)) +% -1));
-                }).*, "bandrobot") != 0)) {
-                    NAR_Bandrobot(iterations);
-                }
-            }
-        }
-    }
-    if (inspectionOnExit) {
-        _ = Shell_ProcessInput(@as([*c]u8, @ptrCast(@volatileCast(@constCast("*opconfig")))));
-        _ = Shell_ProcessInput(@as([*c]u8, @ptrCast(@volatileCast(@constCast("*concepts")))));
-        _ = Shell_ProcessInput(@as([*c]u8, @ptrCast(@volatileCast(@constCast("*cycling_belief_events")))));
-        _ = Shell_ProcessInput(@as([*c]u8, @ptrCast(@volatileCast(@constCast("*cycling_goal_events")))));
-        _ = Shell_ProcessInput(@as([*c]u8, @ptrCast(@volatileCast(@constCast("*stats")))));
-    }
-}
-pub export fn Display_Help() void {
-    _ = puts("\nAll C tests ran successfully, run python3 evaluation.py for more comprehensive evaluation!");
-    _ = puts("");
-    _ = puts("Welcome to `OpenNARS for Applications`!");
-    _ = puts("```````````````````````````````````````");
-    _ = puts(" __        ");
-    _ = puts("/ \\`-+-.__ ");
-    _ = puts("```  |  /o\\");
-    _ = puts("     |  ```");
-    _ = puts("  __/ \\__  ");
-    _ = puts("  ```````  ");
-    _ = puts("If you wish to run examples now, just pass the corresponding parameter:");
-    _ = puts("NAR pong (starts Pong example)");
-    _ = puts("NAR pong2 (starts Pong2 example)");
-    _ = puts("NAR testchamber (starts Test Chamber multistep procedure learning example)");
-    _ = puts("NAR alien (starts the alien example)");
-    _ = puts("NAR cartpole (starts the cartpole example)");
-    _ = puts("NAR bandrobot (starts the band robot example)");
-    _ = puts("NAR robot (starts the grid robot example)");
-    _ = puts("NAR shell (starts the interactive NAL shell)");
-}
+
+// 编译时变量 | 📝可能有其它常量  //
 pub const __llvm__ = @as(c_int, 1);
 pub const __clang__ = @as(c_int, 1);
 pub const __clang_major__ = @as(c_int, 18);

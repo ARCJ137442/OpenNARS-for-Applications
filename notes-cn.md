@@ -63,6 +63,8 @@ NAR.exe NAL_GenerateRuleTable > RuleTable.c
 
 💭原C版本亦尚未有成功编译之经验，何谈转换？
 
+⚠️转换后的Zig源码并未包含实际的方法实现，只编译了头文件中的外部接口
+
 ### 所有编译错误，截止至【2024-06-10 12:18:49】
 
 - `pub const __mingw_printf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified");`
