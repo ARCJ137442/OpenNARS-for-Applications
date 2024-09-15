@@ -11,3 +11,9 @@ NAR.dSYM/
 # For Clangd
 .cache/
 compile_commands.json
+
+# For VSCode
+.vscode/
+
+# For Test
+*.test.*
