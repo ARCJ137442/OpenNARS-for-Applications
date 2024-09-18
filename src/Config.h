@@ -78,6 +78,8 @@
 #define ETERNAL_INPUT_USAGE_BOOST 1000000
 //Questions concept activation priority
 #define QUESTION_PRIMING_INITIAL 0.1
+//Restricted concept world
+#define RESTRICTED_CONCEPT_CREATION_INITIAL false
 
 /*---------------------------------*/
 /* Unification parameters          */
@@ -88,6 +90,10 @@
 #define ALLOW_VAR_INTRO true
 //Numeric term similarity distance scale (everything beyond distance leads to conf 0 analogy!)
 #define SIMILARITY_DISTANCE 1.0
+//Whether numeric term similarity is allowed to be used (allows conditioning results on absolute value to transfer to similar values)
+#define NUMERIC_TERM_SIMILARITY true
+//Whether relations should be derived from two element sequences with attribute relations (allows Transposition / comparative relations to be formed in sensorimotor)
+#define ATTRIBUTE_TERM_RELATIONS true
 
 /*---------------------------------*/
 /* Temporal compounding parameters */
@@ -104,6 +110,8 @@
 #define MAX_SEQUENCE_TIMEDIFF EVENT_BELIEF_DISTANCE
 //Allow events which have not been selected to become preconditions
 #define ALLOW_NOT_SELECTED_PRECONDITIONS_CONDITIONING false
+//Allow parallel implications
+#define ALLOW_CONCURRENT_IMPLICATIONS true
 
 /*------------------*/
 /* Space parameters */
@@ -186,5 +194,7 @@
 #define TERMS_WITH_VARS_AND_ATOMS_FILTER true
 //Use functional equivalence
 #define FUNCTIONAL_EQUIVALENCE true
+//Whether to derive functional equivalences without variables too
+#define FUNCTIONAL_EQUIVALENCE_SPECIFIC true
 
 #endif

@@ -88,11 +88,26 @@ int Shell_ProcessInput(char *line)
             PRINT_EVENTS_PRIORITY_THRESHOLD = 0.0;
         }
         else
+        if(!strncmp("*restrictedconceptcreation=true", line, strlen("*restrictedconceptcreation=true")))
+        {
+            RESTRICTED_CONCEPT_CREATION = true;
+        }
+        else
+        if(!strncmp("*restrictedconceptcreation=false", line, strlen("*restrictedconceptcreation=false")))
+        {
+            RESTRICTED_CONCEPT_CREATION = false;
+        }
+        else
         if(!strncmp("*volume=", line, strlen("*volume=")))
         {
             int volume = 0;
             sscanf(&line[strlen("*volume=")], "%d", &volume);
             PRINT_EVENTS_PRIORITY_THRESHOLD = 1.0 - ((double) volume) / 100.0;
+        }
+        else
+        if(!strncmp("*anticipationconfidence=", line, strlen("*anticipationconfidence=")))
+        {
+            sscanf(&line[strlen("*anticipationconfidence=")], "%lf", &ANTICIPATION_CONFIDENCE);
         }
         else
         if(!strncmp("*decisionthreshold=", line, strlen("*decisionthreshold=")))

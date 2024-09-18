@@ -93,8 +93,6 @@ static Decision Cycle_ProcessSensorimotorEvent(Event *e, long currentTime)
     {
         OccurrenceTimeIndex_Add(c, &occurrenceTimeIndex); //created sequences don't go to the index otherwise
     }
-    e->processed = true;
-    e->creationTime = currentTime;
     //determine the concept it is related to
     bool e_hasVariable = Variable_hasVariable(&e->term, true, true, true);
     bool e_hasQueryVariable = Variable_hasVariable(&e->term, false, false, true);
@@ -102,6 +100,8 @@ static Decision Cycle_ProcessSensorimotorEvent(Event *e, long currentTime)
     RELATED_CONCEPTS_FOREACH(&e->term, c,
     {
         Event ecp = *e;
+        ecp.processed = true;
+        ecp.creationTime = currentTime;
         if(!e_hasVariable || e_hasQueryVariable)  //concept matched to the event which doesn't have variables
         {
             Substitution subs = Variable_Unify(&c->term, &e->term); //concept with variables,
@@ -407,7 +407,8 @@ void Cycle_ProcessBeliefEvents(long currentTime)
                         {
                             bool success4;
                             Event seq_op_cur = Inference_BeliefIntersection(&prec->belief_spike, &opc->belief_spike, &success4);
-                            if(success4 && seq_op_cur.truth.confidence >= MIN_CONFIDENCE)
+                            bool concurrentImplicationFilter = ALLOW_CONCURRENT_IMPLICATIONS || seq_op_cur.occurrenceTime != postcondition.occurrenceTime;
+                            if(success4 && seq_op_cur.truth.confidence >= MIN_CONFIDENCE && concurrentImplicationFilter)
                             {
                                 Term buildSeq = prec->belief_spike.term;
                                 bool success5 = Narsese_OperationSequenceAppendLeftNested(&buildSeq, &opc->belief_spike.term);
@@ -439,7 +440,8 @@ void Cycle_ProcessBeliefEvents(long currentTime)
                     {
                         bool success;
                         Event seq = Inference_BeliefIntersection(&c->belief_spike, &postcondition, &success);
-                        if(success && seq.truth.confidence >= MIN_CONFIDENCE)
+                        bool concurrentImplicationFilter = ALLOW_CONCURRENT_IMPLICATIONS || c->belief_spike.occurrenceTime != postcondition.occurrenceTime;
+                        if(success && seq.truth.confidence >= MIN_CONFIDENCE && concurrentImplicationFilter)
                         {
                             if(!op_id && !op_id2)
                             {
@@ -461,6 +463,66 @@ void Cycle_ProcessBeliefEvents(long currentTime)
                             {
                                 IN_DEBUG( fputs("SEQ ", stdout); Narsese_PrintTerm(&seq.term); puts(""); )
                                 Cycle_ProcessSensorimotorEvent(&seq, currentTime);
+                                if(ATTRIBUTE_TERM_RELATIONS)
+                                {
+                                    //CHECK FOR (<(LOC1 * VAL1) --> ATTR> &/ <(LOC2 * VAL2) --> ATTR>) PATTERN
+                                    //THEN CONSTRUCT SEQ_REL = <(LOC1 * LOC2) --> VAL_REL> WHEREBY VAL_REL IS EITHER (EQUAL ATTR), (LARGER ATTR) or (SMALLER ATTR) or (UNEQUAL ATTR)
+                                    //1  2     3    4    5       6    7      8      9     10  11  12    13
+                                    //&/ -->  -->   *    ATTR    *    ATTR   LOC1   VAL1          LOC2  VAL2
+                                    //0  1     2    3    4       5    6      7      8     9   10  11    12
+                                    Term LOC1 = Term_ExtractSubterm(&seq.term, 7);
+                                    Term LOC2 = Term_ExtractSubterm(&seq.term, 11);
+                                    Term ATTR1 = Term_ExtractSubterm(&seq.term, 4);
+                                    Term ATTR2 = Term_ExtractSubterm(&seq.term, 6);
+                                    if(COMPOUND_TERM_SIZE_MAX >= 16 &&
+                                       seq.term.atoms[0] == Narsese_CopulaIndex(SEQUENCE) && seq.term.atoms[1] == Narsese_CopulaIndex(INHERITANCE) && seq.term.atoms[2] == Narsese_CopulaIndex(INHERITANCE) &&
+                                       seq.term.atoms[3] == Narsese_CopulaIndex(PRODUCT) && seq.term.atoms[5] == Narsese_CopulaIndex(PRODUCT) && Term_Equal(&ATTR1, &ATTR2))
+                                    {
+                                        Atom REL_EQU = Narsese_CopulaIndex(SIMILARITY);
+                                        Atom REL_LARGER = Narsese_CopulaIndex(SEQUENCE);
+                                        bool smaller = false;
+                                        Atom relation = REL_EQU;
+                                        if(Narsese_hasAtomValue(seq.term.atoms[8]) && Narsese_hasAtomValue(seq.term.atoms[12]))
+                                        {
+                                            double v1 = Narsese_getAtomValue(seq.term.atoms[8]);
+                                            double v2 = Narsese_getAtomValue(seq.term.atoms[12]);
+                                            if(v1 > v2)
+                                            {
+                                                relation = REL_LARGER;
+                                                smaller = false;
+                                            }
+                                            if(v1 < v2)
+                                            {
+                                                relation = REL_LARGER;
+                                                smaller = true;
+                                            }
+                                            Term construct = {0};
+                                            //<(a * b) --> (= shape)>.
+                                            // 1  2  3  4  5  6      7
+                                            //--> *  =  a  b  shape  @
+                                            // 0  1  2  3  4  5      6
+                                            construct.atoms[0] = Narsese_CopulaIndex(INHERITANCE);
+                                            construct.atoms[1] = Narsese_CopulaIndex(PRODUCT);
+                                            construct.atoms[2] = relation; //+
+                                            if(smaller)
+                                            {
+                                                Term_OverrideSubterm(&construct, 3, &LOC2);
+                                                Term_OverrideSubterm(&construct, 4, &LOC1);
+                                            }
+                                            else
+                                            {
+                                                Term_OverrideSubterm(&construct, 3, &LOC1);
+                                                Term_OverrideSubterm(&construct, 4, &LOC2);
+                                            }
+                                            Term_OverrideSubterm(&construct, 5, &ATTR1);
+                                            Term_OverrideSubterm(&construct, 6, &ATTR1);
+                                            construct.atoms[6] = Narsese_CopulaIndex(SET_TERMINATOR);
+                                            Event seq_rel = seq;
+                                            seq_rel.term = construct;
+                                            Memory_AddEvent(&seq_rel, currentTime, 1.0, false, true, false, 0); //complexity penalized
+                                        }
+                                    }
+                                }
                                 if(is_op_seq && selectedBeliefsPriority[h] >= 1.0)
                                 {
                                     Decision_Anticipate(op_id, seq.term, currentTime); //collection of negative evidence, new way
@@ -480,8 +542,8 @@ void Cycle_ProcessBeliefEvents(long currentTime)
 
 //A, <A ==> B> |- B (Deduction)
 //A, <(A && B) ==> C> |- <B ==> C> (Deduction)
-//B, <A ==> B> |- A (Abduction')
-//A, (A && B) |- B  with dep var elim (Anonymous Analogy')
+//B, <A ==> B> |- A (Abduction)
+//A, (A && B) |- B  with dep var elim (Anonymous Analogy)
 void Cycle_SpecialInferences(Term term1, Term term2, Truth truth1, Truth truth2, long conclusionOccurrence, double occurrenceTimeOffset, Stamp conclusionStamp, 
                        long currentTime, double parentPriority, double conceptPriority, bool doublePremise, Concept *validation_concept, long validation_cid)
 {
