@@ -336,7 +336,6 @@ static Decision Decision_ConsiderImplication(long currentTime, Event *goal, Impl
     if(precondition != NULL)
     {
         Event ContextualOperation = Inference_GoalDeduction(goal, imp, currentTime); //(&/,a,op())! :\:
-        Term potential_operation = {0};
         Term imp_subject = Term_ExtractSubterm(&imp->term, 1);
         assert(Narsese_OperationSequenceAppendLeftNested(&decision.operationTerm, &imp_subject), "Failed to extract operation in considered implication!");
         Event preconCopy = *precondition;
