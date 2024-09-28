@@ -270,7 +270,7 @@ bool Cycle_GoalSequenceDecomposition(Event *selectedGoal, double selectedGoalPri
 static void Cycle_ProcessAndInferGoalEvents(long currentTime, int layer)
 {
     Decision best_decision = {0};
-    //process selected goals
+    //process selected goals, try to find an executable decision
     for(int i=0; i<goalsSelectedCnt; i++)
     {
         Event *goal = &selectedGoals[i];
@@ -283,27 +283,35 @@ static void Cycle_ProcessAndInferGoalEvents(long currentTime, int layer)
         Decision decision = Cycle_ProcessSensorimotorEvent(goal, currentTime);
         best_decision = Decision_BetterDecision(best_decision, decision);
     }
-    if(best_decision.execute && best_decision.operationID[0] > 0)
+    //if the best decision is executable, try to execute it
+    if(best_decision.execute)
     {
-        //reset cycling goal events after execution to avoid "residue actions"
-        for(int layer=0; layer<CYCLING_GOAL_EVENTS_LAYERS; layer++)
+        if(best_decision.operationID[0] > 0)
         {
-            PriorityQueue_INIT(&cycling_goal_events[layer], cycling_goal_events[layer].items, cycling_goal_events[layer].maxElements);
-        }
-        //also don't re-add the selected goal:
-        goalsSelectedCnt = 0;
-        //execute decision
-        Decision_Execute(currentTime, &best_decision);
-    }
-    //pass goal spikes on to the next
-    for(int i=0; i<goalsSelectedCnt && !best_decision.execute; i++)
-    {
-        Event *goal = &selectedGoals[i];
-        conceptProcessID++; //process subgoaling for the related concepts for each selected goal
-        RELATED_CONCEPTS_FOREACH(&goal->term, c,
-        {
-            if(Variable_Unify(&c->term, &goal->term).success)
+            //reset cycling goal events after execution to avoid "residue actions"
+            for(int layer=0; layer<CYCLING_GOAL_EVENTS_LAYERS; layer++)
             {
+                PriorityQueue_INIT(&cycling_goal_events[layer], cycling_goal_events[layer].items, cycling_goal_events[layer].maxElements);
+            }
+            //also don't re-add the selected goal:
+            goalsSelectedCnt = 0;
+            //execute decision
+            Decision_Execute(currentTime, &best_decision);
+        }
+    }
+    //otherwise, pass goal spikes on to the next
+    else
+    {
+        for(int i=0; i<goalsSelectedCnt; i++)
+        {
+            Event *goal = &selectedGoals[i];
+            conceptProcessID++; //process subgoaling for the related concepts for each selected goal
+            RELATED_CONCEPTS_FOREACH(&goal->term, c,
+            {
+                if(!Variable_Unify(&c->term, &goal->term).success) //the concept must have the same form as the goal
+                {
+                    continue;
+                }
                 bool revised;
                 c->goal_spike = Inference_RevisionAndChoice(&c->goal_spike, goal, currentTime, &revised);
                 for(int opi=NOP_SUBGOALING ? 0 : 1; opi<=OPERATIONS_MAX; opi++)
@@ -334,8 +342,8 @@ static void Cycle_ProcessAndInferGoalEvents(long currentTime, int layer)
                         }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 }
 
