@@ -284,7 +284,7 @@ static void Cycle_ProcessAndInferGoalEvents(long currentTime, int layer)
         best_decision = Decision_BetterDecision(best_decision, decision);
     }
     //if the best decision is executable, try to execute it
-    if(best_decision.execute)
+    if(best_decision.executable)
     {
         if(best_decision.operationID[0] > 0)
         {

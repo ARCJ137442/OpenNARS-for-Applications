@@ -68,7 +68,7 @@ extern int BABBLING_OPS;
 typedef struct
 {
     double desire;
-    bool execute;
+    bool executable;
     Term operationTerm;
     int operationID[MAX_COMPOUND_OP_LEN];
     Operation op[MAX_COMPOUND_OP_LEN];

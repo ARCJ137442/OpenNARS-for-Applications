@@ -283,7 +283,7 @@ static Decision Decision_MotorBabbling()
         IN_DEBUG (
             printf(" NAR BABBLE %d\n", decision.operationID[0]);
         )
-        decision.execute = true;
+        decision.executable = true;
         decision.desire = 1.0;
         if(operations[decision.operationID[0]-1].arguments[0].atoms[0])
         {
@@ -549,7 +549,7 @@ Decision Decision_BestCandidate(Concept *goalconcept, Event *goal, long currentT
     Narsese_PrintTerm(&bestImp.term); fputs(". ", stdout); Stamp_print(&bestImp.stamp); printf(" Truth: frequency=%f confidence=%f dt=%f", bestImp.truth.frequency, bestImp.truth.confidence, bestImp.occurrenceTimeOffset);
     fputs(" precondition: ", stdout); Narsese_PrintTerm(&decision.reason->term); fputs(". :|: ", stdout); Stamp_print(&decision.reason->stamp); printf(" Truth: frequency=%f confidence=%f", decision.reason->truth.frequency, decision.reason->truth.confidence);
     printf(" occurrenceTime=%ld\n", decision.reason->occurrenceTime);
-    decision.execute = true;
+    decision.executable = true;
     return decision;
 }
 
@@ -678,7 +678,7 @@ Decision Decision_Suggest(Concept *postc, Event *goal, long currentTime)
     }
     //try matching op if didn't motor babble
     Decision decision_suggested = Decision_BestCandidate(postc, goal, currentTime);
-    if(!babble_decision.execute || decision_suggested.desire > MOTOR_BABBLING_SUPPRESSION_THRESHOLD)
+    if(!babble_decision.executable || decision_suggested.desire > MOTOR_BABBLING_SUPPRESSION_THRESHOLD)
     {
        return decision_suggested;
     }
@@ -687,7 +687,7 @@ Decision Decision_Suggest(Concept *postc, Event *goal, long currentTime)
 
 Decision Decision_BetterDecision(Decision best_decision, Decision decision)
 {
-    if(decision.execute && decision.desire >= best_decision.desire)
+    if(decision.executable && decision.desire >= best_decision.desire)
     {
         return decision;
     }
