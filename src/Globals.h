@@ -39,7 +39,7 @@
 //Macros//
 //////////
 //Whether debug mode should be on
-#define DEBUG false
+#define DEBUG true
 //Exit with stats output
 #define EXIT_STATS true
 //Whether input should be printed

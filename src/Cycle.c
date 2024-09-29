@@ -139,7 +139,7 @@ void Cycle_PopEvents(Event *selectionArray, double *selectionPriority, int *sele
         double priority = 0;
         if(!PriorityQueue_PopMax(queue, (void**) &e, &priority))
         {
-           IN_DEBUG( puts("Selecting event failed, maybe there is no event left."); )
+        //    IN_DEBUG( puts("Selecting event failed, maybe there is no event left."); ) // ! too noisy for debugging
            assert(queue->itemsAmount == 0, "No item was popped, only acceptable reason is when it's empty");
            break;
         }
