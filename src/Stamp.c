@@ -23,9 +23,22 @@
  */
 
 #include "Stamp.h"
+// #include "Globals.h"
 
 Stamp Stamp_make(Stamp *stamp1, Stamp *stamp2)
 {
+    // * 🚩【2024-09-30 12:16:12】ONA中本身就存在「时间戳冲突」的情况
+    // * 📄触发条件：`a. :|:` + `b. :|:` → fail
+    // if(Stamp_checkOverlap(stamp1, stamp2))
+    // {
+    //     puts("s1:");
+    //     Stamp_print(stamp1);
+    //     puts("");
+    //     puts("s2:");
+    //     Stamp_print(stamp2);
+    //     puts("");
+    //     assert(false, "stamp shouldn't overlap!");
+    // }
     Stamp ret = {0};
     bool processStamp1 = true;
     bool processStamp2 = true;
