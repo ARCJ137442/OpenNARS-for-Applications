@@ -108,4 +108,7 @@ void Memory_printAddedImplication(Stamp *stamp, Term *implication, Truth *truth,
 //Get operation ID
 int Memory_getOperationID(Term *term);
 
+//
+void Memory_PrintConcepts();
+
 #endif

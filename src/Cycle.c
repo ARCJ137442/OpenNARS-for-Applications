@@ -759,6 +759,12 @@ void Cycle_RelativeForgetting(long currentTime)
             cycling_goal_events[layer].items[i].priority *= EVENT_DURABILITY;
         }
     }
+    // // * 🚩【2024-10-01 13:05:06】新测试「优先队列debug」
+    // IN_DEBUG({
+    //     printf("concepts: ");
+    //     Memory_PrintConcepts();
+    //     puts("");
+    // })
     //Apply concept forgetting:
     for(int i=0; i<concepts.itemsAmount; i++)
     {
@@ -773,6 +779,12 @@ void Cycle_RelativeForgetting(long currentTime)
     {
         PriorityQueue_Rebuild(&cycling_goal_events[layer]);
     }
+    // * 🚩【2024-10-01 13:05:06】新测试「优先队列debug」
+    IN_DEBUG({
+        printf(" -> ");
+        Memory_PrintConcepts();
+        puts("");
+    })
 }
 
 void Cycle_Perform(long currentTime)
@@ -793,4 +805,10 @@ void Cycle_Perform(long currentTime)
     Cycle_Inference(currentTime);
     //5. Apply relative forgetting for concepts according to CONCEPT_DURABILITY and events according to BELIEF_EVENT_DURABILITY
     Cycle_RelativeForgetting(currentTime);
+    // // * 🚩【2024-10-01 13:05:06】新测试「优先队列debug」
+    // IN_DEBUG({
+    //     printf("concepts: ");
+    //     Memory_PrintConcepts();
+    //     puts("");
+    // })
 }

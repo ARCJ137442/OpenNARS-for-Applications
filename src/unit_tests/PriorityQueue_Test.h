@@ -49,5 +49,49 @@ void PriorityQueue_Test()
             evictions++;
         }
     }
+    puts("New test");
+    // * 🚩【2024-10-01 13:04:57】优先队列 更强的测试
+    {
+        PriorityQueue queue;
+        int n_items = 10;
+        Item items[n_items];
+
+        for(int i=0; i<n_items; i++)
+        {
+            items[i].address = 0;
+            items[i].priority = 1;
+        }
+        PriorityQueue_INIT(&queue, items, n_items);
+        for(int i=0, evictions=0; i<n_items; i++)
+        {
+            for(int i=0; i<queue.itemsAmount; i++)
+            {
+                Item c = queue.items[i];
+                printf("%ld ", (long)c.address);
+            }
+            printf(" -> ");
+            PriorityQueue_Push_Feedback feedback = PriorityQueue_Push(&queue, 1.0);
+            if(feedback.added)
+            {
+                feedback.addedItem.address = (void*) ((long) i+1);
+                queue.items[queue.itemsAmount-1] = feedback.addedItem;
+            }
+            for(int i=0; i<queue.itemsAmount; i++)
+            {
+                Item c = queue.items[i];
+                printf("%ld ", (long)c.address);
+            }
+
+            if(feedback.added)
+            {
+                printf("item was added %f %ld\n", feedback.addedItem.priority, (long)feedback.addedItem.address);
+            }
+            if(feedback.evicted)
+            {
+                printf("evicted item %f %ld\n", feedback.evictedItem.priority, (long)feedback.evictedItem.address);
+                evictions++;
+            }
+        }
+    }
     puts("<<PriorityQueue test successful");
 }
