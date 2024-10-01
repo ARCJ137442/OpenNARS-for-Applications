@@ -424,21 +424,21 @@ Decision Decision_BestCandidate(Concept *goalconcept, Event *goal, long currentT
                     assert(Narsese_copulaEquals(imp.term.atoms[0], TEMPORAL_IMPLICATION), "This should be a temporal implication!");
                     Term left_side_with_op = Term_ExtractSubterm(&imp.term, 1);
                     Term left_side = Narsese_GetPreconditionWithoutOp(&left_side_with_op); //might be something like <#1 --> a>
-                    IN_DEBUG({
-                        printf("%%%% select imp to consider: "); Narsese_PrintTerm(&imp.term); puts("");
-                    })
+                    // IN_DEBUG({
+                    //     printf("%%%% select imp to consider: "); Narsese_PrintTerm(&imp.term); puts("");
+                    // })
                     for(int cmatch_k=0; cmatch_k<concepts.itemsAmount; cmatch_k++)
                     {
                         Concept *cmatch = concepts.items[cmatch_k].address;
-                        IN_DEBUG({
-                            printf("%%%% select concept to consider: "); Narsese_PrintTerm(&cmatch->term); puts("");
-                        })
+                        // IN_DEBUG({
+                        //     printf("%%%% select concept to consider: "); Narsese_PrintTerm(&cmatch->term); puts("");
+                        // })
                         if(!Variable_hasVariable(&cmatch->term, true, true, true) && cmatch->belief_spike.type != EVENT_TYPE_DELETED)
                         {
                             Substitution subs2 = Variable_UnifyWithAnalogy(cmatch->belief_spike.truth, &left_side, &cmatch->term);
-                            IN_DEBUG({
-                                printf("subs2.success = %s\n", subs2.success ? "true" : "false");
-                            })
+                            // IN_DEBUG({
+                            //     printf("subs2.success = %s\n", subs2.success ? "true" : "false");
+                            // })
                             if(subs2.success)
                             {
                                 bool perfectMatch = subs2.truth.confidence == cmatch->belief_spike.truth.confidence;
@@ -462,9 +462,9 @@ Decision Decision_BestCandidate(Concept *goalconcept, Event *goal, long currentT
                                         break;
                                     }
                                 }
-                                IN_DEBUG({
-                                    printf("hasCloserPreconditionLink = %s\n", hasCloserPreconditionLink ? "true" : "false");
-                                })
+                                // IN_DEBUG({
+                                //     printf("hasCloserPreconditionLink = %s\n", hasCloserPreconditionLink ? "true" : "false");
+                                // })
                                 if(hasCloserPreconditionLink)
                                 {
                                     continue;
@@ -536,9 +536,9 @@ Decision Decision_BestCandidate(Concept *goalconcept, Event *goal, long currentT
             }
         }
     }
-    IN_DEBUG({
-        printf("** best candidate = "); Narsese_PrintTerm(&decision.operationTerm); puts("");
-    })
+    // IN_DEBUG({
+    //     printf("** best candidate = "); Narsese_PrintTerm(&decision.operationTerm); puts("");
+    // })
     if(decision.desire < DECISION_THRESHOLD)
     {
         return (Decision) {0}; 

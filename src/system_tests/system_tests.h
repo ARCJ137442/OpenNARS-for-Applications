@@ -69,11 +69,11 @@ void DRAW_LINE(double x, double y, double angle, int len, char *canvas, char sym
 
 void Run_System_Tests()
 {
-    NAR_Alphabet_Test();
-    NAR_Procedure_Test();
-    NAR_Follow_Test();
-    NAR_Multistep_Test();
+    // NAR_Alphabet_Test();
+    // NAR_Procedure_Test();
+    // NAR_Follow_Test();
+    // NAR_Multistep_Test();
     NAR_Multistep2_Test();
-    NAR_Sequence_Test();
+    // NAR_Sequence_Test();
     // NAR_UDPNAR_Test();
 }

@@ -779,12 +779,12 @@ void Cycle_RelativeForgetting(long currentTime)
     {
         PriorityQueue_Rebuild(&cycling_goal_events[layer]);
     }
-    // * 🚩【2024-10-01 13:05:06】新测试「优先队列debug」
-    IN_DEBUG({
-        printf(" -> ");
-        Memory_PrintConcepts();
-        puts("");
-    })
+    // // * 🚩【2024-10-01 13:05:06】新测试「优先队列debug」
+    // IN_DEBUG({
+    //     printf(" -> ");
+    //     Memory_PrintConcepts();
+    //     puts("");
+    // })
 }
 
 void Cycle_Perform(long currentTime)

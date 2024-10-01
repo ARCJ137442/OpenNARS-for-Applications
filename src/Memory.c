@@ -457,10 +457,10 @@ int Memory_getOperationID(Term *term)
 }
 
 
-void Memory_PrintConcepts() {
-    for(int i=0; i<concepts.itemsAmount; i++)
-    {
-        Concept* c = (Concept*) concepts.items[i].address;
-        printf("%ld @ %.2f ", c->id , concepts.items[i].priority);
-    }
-}
+// void Memory_PrintConcepts() {
+//     for(int i=0; i<concepts.itemsAmount; i++)
+//     {
+//         Concept* c = (Concept*) concepts.items[i].address;
+//         printf("%ld @ %.2f ", c->id , concepts.items[i].priority);
+//     }
+// }

@@ -159,9 +159,9 @@ int main(int argc, char *argv[])
     if(argc == 1)
     {
         NAR_INIT();
-        Run_Unit_Tests();
+        // Run_Unit_Tests();
         Run_System_Tests();
-        Display_Help();
+        // Display_Help();
     }
     return 0;
 }

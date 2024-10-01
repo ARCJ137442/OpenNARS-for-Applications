@@ -109,6 +109,6 @@ void Memory_printAddedImplication(Stamp *stamp, Term *implication, Truth *truth,
 int Memory_getOperationID(Term *term);
 
 //
-void Memory_PrintConcepts();
+// void Memory_PrintConcepts();
 
 #endif
