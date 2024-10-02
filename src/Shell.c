@@ -164,7 +164,7 @@ int Shell_ProcessInput(char *line)
             {
                 Concept *c = concepts.items[i].address;
                 assert(c != NULL, "Concept is null");
-                fputs("//", stdout);
+                printf("//%ld ", c->id);
                 Narsese_PrintTerm(&c->term);
                 printf(": { \"priority\": %f, \"usefulness\": %f, \"useCount\": %ld, \"lastUsed\": %ld, \"frequency\": %f, \"confidence\": %f, \"termlinks\": [", c->priority, concepts.items[i].priority, c->usage.useCount, c->usage.lastUsed, c->belief.truth.frequency, c->belief.truth.confidence);
                 Term left = Term_ExtractSubterm(&c->term, 1);

@@ -8,6 +8,7 @@
         "goalsubs",
         "lockfree",
         "Lpart",
+        "Multistep",
         "postc",
         "Rpart",
         "subgoal",
@@ -15,6 +16,7 @@
         "subgoals",
         "Subterm",
         "TIMEDIFF",
-        "Trelation"
+        "Trelation",
+        "UDPNAR"
     ]
 }

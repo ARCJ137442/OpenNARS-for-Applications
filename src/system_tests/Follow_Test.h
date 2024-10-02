@@ -96,5 +96,7 @@ void NAR_Follow_Test()
             break;
         NAR_Cycles(10);
     }
-    printf("<<NAR Follow test successful goods=%d bads=%d ratio=%f\n",goods,bads, (((float) goods)/(((float) goods) + ((float) bads))));
+    float ratio = ((float) goods)/(((float) goods) + ((float) bads));
+    printf("<<NAR Follow test successful goods=%d bads=%d ratio=%f\n",goods,bads,ratio);
+    assert(ratio>0.75, "too bad ratio");
 }

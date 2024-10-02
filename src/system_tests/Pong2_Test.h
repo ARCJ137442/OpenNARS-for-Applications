@@ -58,6 +58,8 @@ void NAR_Pong2(long iterations)
     int hits = 0;
     int misses = 0;
     int t=0;
+    // NAR_AddInputBelief(Narsese_Term("<(ball_right &/ ^left) =/> good_nar>"));
+    // NAR_AddInputBelief(Narsese_Term("<(ball_left &/ ^right) =/> good_nar>"));
     while(1)
     {
         if(t++ > iterations && iterations != -1)

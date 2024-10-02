@@ -58,5 +58,6 @@ void NAR_Multistep2_Test()
     NAR_AddInputGoal(Narsese_AtomicTerm("light_active"));
     assert(!NAR_Lightswitch_GotoSwitch_executed && NAR_Lightswitch_ActivateSwitch_executed, "NAR needs to activate the switch (2)");
     NAR_Lightswitch_ActivateSwitch_executed = false;
+    Shell_ProcessInput("*concepts");
     puts("<<NAR Multistep2 test successful");
 }

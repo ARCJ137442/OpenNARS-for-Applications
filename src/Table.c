@@ -59,8 +59,11 @@ void Table_Remove(Table *table, int index)
     table->itemsAmount = MAX(0, table->itemsAmount-1);
 }
 
-Implication *Table_AddAndRevise(Table *table, Implication *imp)
+Implication *Table_AddAndRevise(Table *table, Implication *impl)
 {
+    // Implication imp_ = *impl;
+    // Implication *imp = &imp_;
+    Implication *imp = impl;
     //1. find element with same Term
     int same_i = -1;
     for(int i=0; i<table->itemsAmount; i++)

@@ -33,12 +33,15 @@ int BABBLING_OPS = OPERATIONS_MAX;
 
 static void Decision_AddNegativeConfirmation(Event *precondition, Implication imp, int operationID, Concept *postc)
 {
+    printf("NegativeConfirmation: "); Narsese_PrintTerm(&precondition->term); printf(" @ %d; postc = ", operationID); Narsese_PrintTerm(&postc->term); puts("");
+
     Implication negative_confirmation = imp;
     Truth TNew = { .frequency = 0.0, .confidence = ANTICIPATION_CONFIDENCE };
     Truth TPast = Truth_Projection(precondition->truth, 0, round(imp.occurrenceTimeOffset));
     negative_confirmation.truth = Truth_Eternalize(Truth_Induction(TNew, TPast));
     negative_confirmation.stamp = (Stamp) {0}; //precondition->stamp;
     assert(negative_confirmation.truth.confidence >= 0.0 && negative_confirmation.truth.confidence <= 1.0, "(666) confidence out of bounds");
+    // Implication n = negative_confirmation;
     Implication *added = Table_AddAndRevise(&postc->precondition_beliefs[operationID], &negative_confirmation);
     if(added != NULL)
     {
@@ -554,6 +557,7 @@ Decision Decision_BestCandidate(Concept *goalconcept, Event *goal, long currentT
 
 void Decision_Anticipate(int operationID, Term opTerm, long currentTime)
 {
+    printf("Anticipate: "); Narsese_PrintTerm(&opTerm); printf(" @ %d; currentTime = %ld\n", operationID, currentTime);
     assert(operationID >= 0 && operationID <= OPERATIONS_MAX, "Wrong operation id, did you inject an event manually?");
     for(int j=0; j<concepts.itemsAmount; j++)
     {
@@ -570,6 +574,7 @@ void Decision_Anticipate(int operationID, Term opTerm, long currentTime)
             }
             Implication imp = postc->precondition_beliefs[operationID].array[k]; //(&/,a,op) =/> b.
             valid_implications[k] = imp;
+            printf("Valid implication @ precondition_beliefs: "); Narsese_PrintTerm(&imp.term); printf(" @ %d; postc = ", operationID); Narsese_PrintTerm(&postc->term); puts("");
         }
         for(int h=0; operationID == 0 && h<postc->implication_links.itemsAmount; h++, k++)
         {
@@ -588,6 +593,7 @@ void Decision_Anticipate(int operationID, Term opTerm, long currentTime)
             Implication imp = valid_implications[h]; //(&/,a,op) =/> b.
             Concept *current_prec = imp.sourceConcept;
             Event *precondition = &current_prec->belief_spike;
+            printf("$$ precondition = "); Narsese_PrintTerm(&precondition->term); printf(" @ %d; postc = ", operationID); Narsese_PrintTerm(&postc->term); puts("");
             if(precondition != NULL && precondition->type != EVENT_TYPE_DELETED)
             {
                 if(operationID > 0) //it's a real operation, check if the link's operation is the same
@@ -617,6 +623,7 @@ void Decision_Anticipate(int operationID, Term opTerm, long currentTime)
                              .occurrenceTime = currentTime };
                 bool success;
                 Event seqop = Inference_BeliefIntersection(&updated_precondition, &op, &success);
+                printf("Event seqop = Inference_BeliefIntersection(..) = "); Narsese_PrintTerm(&seqop.term); printf(" @ %d; postc = ", operationID); Narsese_PrintTerm(&postc->term); puts("");
                 if(success)
                 {
                     Event result = Inference_BeliefDeduction(&seqop, &imp); //b. :/:

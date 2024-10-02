@@ -133,6 +133,7 @@ Concept* Memory_Conceptualize(Term *term, long currentTime)
             recycleConcept->term = *term;
             recycleConcept->id = concept_id;
             recycleConcept->usage = (Usage) { .useCount = 1, .lastUsed = currentTime };
+            printf("New Concept @ %d = ", concept_id); Narsese_PrintTerm(&recycleConcept->term); puts("");
             concept_id++;
             //also add added concept to HashMap:
             IN_DEBUG( assert(HashTable_Get(&HTconcepts, &recycleConcept->term) == NULL, "VMItem to add already exists!"); )
@@ -322,13 +323,16 @@ void Memory_ProcessNewBeliefEvent(Event *event, long currentTime, double priorit
                 imp.sourceConcept = source_concept;
                 imp.term = event->term;
                 Implication *revised = Table_AddAndRevise(Narsese_copulaEquals(event->term.atoms[0], IMPLICATION) ? &target_concept->implication_links : &target_concept->precondition_beliefs[opi], &imp);
+                printf("NewImp: "); Narsese_PrintTerm(&imp.term); printf("; currentTime = %ld", currentTime);
                 if(revised != NULL)
                 {
+                    printf("; revised = "); Narsese_PrintTerm(&revised->term);
                     bool wasRevised = revised->truth.confidence > event->truth.confidence || revised->truth.confidence == MAX_CONFIDENCE;
                     Memory_printAddedImplication(&event->stamp, &event->term, &imp.truth, event->occurrenceTimeOffset, priority, input, false, true);
                     if(wasRevised)
                         Memory_printAddedImplication(&revised->stamp, &revised->term, &revised->truth, revised->occurrenceTimeOffset, priority, input, true, true);
                 }
+                puts("");
             }
         }
     }
