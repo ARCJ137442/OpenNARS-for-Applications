@@ -12,8 +12,5 @@ NAR.dSYM/
 .cache/
 compile_commands.json
 
-# For VSCode
-.vscode/
-
 # For Test
 *.test.*
