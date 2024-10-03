@@ -18,5 +18,20 @@
         "TIMEDIFF",
         "Trelation",
         "UDPNAR"
-    ]
+    ],
+    "files.associations": {
+        "LICENSE": "plaintext",
+        "*.jls": "julia",
+        ".prettierignore": "ignore",
+        "*.lock": "toml",
+        "*.wasm": "wasm",
+        "robot_test.h": "c",
+        "pong2_test.h": "c",
+        "alien_test.h": "c",
+        "bandrobot_test.h": "c",
+        "sequence_test.h": "c",
+        "pong_test.h": "c",
+        "testchamber_test.h": "c",
+        "cartpole_test.h": "c"
+    }
 }
