@@ -51,7 +51,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "Memory.h"
-#include "NAR.h"
 #include "Config.h"
 
 //Parameters//
@@ -78,11 +77,12 @@ typedef struct
     Event *reason;
     int tableIndex;
 }Decision;
+typedef Event (*F_AddInputBelief)(Term);
 
 //Methods//
 //-------//
 //execute decision
-void Decision_Execute(long currentTime, Decision *decision);
+void Decision_Execute(long currentTime, Decision *decision, F_AddInputBelief AddInputBelief);
 //assumption of failure, also works for "do nothing operator"
 void Decision_Anticipate(int operationID, Term op_term, long currentTime);
 //NAR decision making rule applying when goal is an operation

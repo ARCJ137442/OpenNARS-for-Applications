@@ -50,7 +50,7 @@ static void Decision_AddNegativeConfirmation(Event *precondition, Implication im
 }
 
 //Inject action event after execution or babbling
-void Decision_Execute(long currentTime, Decision *decision)
+void Decision_Execute(long currentTime, Decision *decision, F_AddInputBelief AddInputBelief)
 {
     if(FUNCTIONAL_EQUIVALENCE && decision->usedContingency.term.atoms[0])
     {
@@ -229,7 +229,7 @@ void Decision_Execute(long currentTime, Decision *decision)
         feedbackTerm = Variable_ApplySubstitute(feedbackTerm, feedback.subs, &success);
         if(success)
         {
-            NAR_AddInputBelief(feedbackTerm);
+            AddInputBelief(feedbackTerm);
             //assumption of failure extension to specific cases not experienced before:
             if(ANTICIPATE_FOR_NOT_EXISTING_SPECIFIC_TEMPORAL_IMPLICATION && decision->missing_specific_implication.term.atoms[0])
             {
@@ -286,7 +286,7 @@ static Decision Decision_MotorBabbling()
     return decision;
 }
 
-static Decision Decision_ConsiderNegativeOutcomes(Decision decision)
+static Decision Decision_ConsiderNegativeOutcomes(Decision decision, long currentTime)
 {
     Event OpGoalImmediateOutcomes = {0};
     //1. discount decision based on negative outcomes via revision
@@ -388,7 +388,7 @@ static Decision Decision_ConsiderImplication(long currentTime, Event *goal, Impl
             i++;
         }
     }
-    Decision d = Decision_ConsiderNegativeOutcomes(decision);
+    Decision d = Decision_ConsiderNegativeOutcomes(decision, currentTime);
     IN_DEBUG({
         printf("!! considered d = "); Narsese_PrintTerm(&d.operationTerm); puts("");
         printf("op[0] = %d\n", d.operationID[0]);

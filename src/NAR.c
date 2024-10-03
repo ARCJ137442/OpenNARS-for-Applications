@@ -24,7 +24,7 @@
 
 #include "NAR.h"
 
-long currentTime = 1;
+long currentTime = 1; //This needs to be private to encourage the design of "pass in parameters rather than using global variables"
 static bool initialized = false;
 static int op_k = 0;
 double QUESTION_PRIMING = QUESTION_PRIMING_INITIAL;
@@ -47,7 +47,7 @@ void NAR_Cycles(int cycles)
     for(int i=0; i<cycles; i++)
     {
         IN_DEBUG( puts("\nNew system cycle:\n----------"); )
-        Cycle_Perform(currentTime);
+        Cycle_Perform(currentTime, NAR_AddInputBelief);
         currentTime++;
     }
 }

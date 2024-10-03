@@ -46,7 +46,7 @@
 //Methods//
 //-------//
 //Apply one operating cycle
-void Cycle_Perform(long currentTime);
+void Cycle_Perform(long currentTime, F_AddInputBelief AddInputBelief);
 //Init cycle module
 void Cycle_INIT();
 
