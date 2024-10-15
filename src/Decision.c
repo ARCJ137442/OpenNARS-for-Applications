@@ -72,7 +72,7 @@ void Decision_Execute(long currentTime, Decision *decision)
                 Term prec1 = Narsese_GetPreconditionWithoutOp(&prec_op1);
                 Term prec2 = Narsese_GetPreconditionWithoutOp(&prec_op2);
                 bool prec1_prec2_equal = Term_Equal(&prec1, &prec2);
-                if(!prec1_prec2_equal)
+                if(FUNCTIONAL_EQUIVALENCE_SIMPLIFY && !prec1_prec2_equal)
                 {
                     if(Narsese_copulaEquals(prec1.atoms[0], SEQUENCE) && Narsese_copulaEquals(prec2.atoms[0], SEQUENCE))
                     {
@@ -556,33 +556,41 @@ Decision Decision_BestCandidate(Concept *goalconcept, Event *goal, long currentT
 void Decision_Anticipate(int operationID, Term opTerm, long currentTime)
 {
     assert(operationID >= 0 && operationID <= OPERATIONS_MAX, "Wrong operation id, did you inject an event manually?");
+    bool temporal = false;
+    USE_LINKS:
     for(int j=0; j<concepts.itemsAmount; j++)
     {
         Concept *postc = concepts.items[j].address;
         Implication valid_implications[TABLE_SIZE*2] = {0};
-        int k;
-        for(k=0; k<postc->precondition_beliefs[operationID].itemsAmount; k++)
+        int k=0;
+        if(temporal)
         {
-            if(!Memory_ImplicationValid(&postc->precondition_beliefs[operationID].array[k]))
+            for(; k<postc->precondition_beliefs[operationID].itemsAmount; k++)
             {
-                Table_Remove(&postc->precondition_beliefs[operationID], k);
-                k--;
-                continue;
+                if(!Memory_ImplicationValid(&postc->precondition_beliefs[operationID].array[k]))
+                {
+                    Table_Remove(&postc->precondition_beliefs[operationID], k);
+                    k--;
+                    continue;
+                }
+                Implication imp = postc->precondition_beliefs[operationID].array[k]; //(&/,a,op) =/> b.
+                valid_implications[k] = imp;
             }
-            Implication imp = postc->precondition_beliefs[operationID].array[k]; //(&/,a,op) =/> b.
-            valid_implications[k] = imp;
         }
-        for(int h=0; operationID == 0 && h<postc->implication_links.itemsAmount; h++, k++)
+        else
+        if(operationID == 0)
         {
-            if(!Memory_ImplicationValid(&postc->implication_links.array[h]))
+            for(; k<postc->implication_links.itemsAmount; k++)
             {
-                Table_Remove(&postc->implication_links, h);
-                h--;
-                k--;
-                continue;
+                if(!Memory_ImplicationValid(&postc->implication_links.array[k]))
+                {
+                    Table_Remove(&postc->implication_links, k);
+                    k--;
+                    continue;
+                }
+                Implication imp = postc->implication_links.array[k]; //a ==> b.
+                valid_implications[k] = imp;
             }
-            Implication imp = postc->implication_links.array[h]; //a ==> b.
-            valid_implications[k] = imp;
         }
         for(int h=0; h<k; h++)
         {
@@ -645,7 +653,10 @@ void Decision_Anticipate(int operationID, Term opTerm, long currentTime)
                                         c->predicted_belief = Inference_RevisionAndChoice(&c->predicted_belief, &result, currentTime, NULL);
                                         if(!Truth_Equal(&c->predicted_belief.truth, &oldTruth) || c->predicted_belief.occurrenceTime != oldOccurrenceTime)
                                         {
-                                            Memory_printAddedEvent(&c->predicted_belief.stamp, &c->predicted_belief, 1.0, false, true, false, true, false);
+                                            if(PRINT_PREDICTIONS_AS_DERIVATIONS)
+                                            {
+                                                Memory_printAddedEvent(&c->predicted_belief.stamp, &c->predicted_belief, 1.0, false, true, false, true, false);
+                                            }
                                         }
                                     }
                                     else
@@ -665,6 +676,11 @@ void Decision_Anticipate(int operationID, Term opTerm, long currentTime)
                 }
             }
         }
+    }
+    if(!temporal)
+    {
+        temporal = true;
+        goto USE_LINKS;
     }
 }
 
