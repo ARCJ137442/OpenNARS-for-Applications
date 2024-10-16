@@ -8,7 +8,6 @@
         "goalsubs",
         "lockfree",
         "Lpart",
-        "Multistep",
         "postc",
         "Rpart",
         "subgoal",
@@ -32,9 +31,6 @@
         "sequence_test.h": "c",
         "pong_test.h": "c",
         "testchamber_test.h": "c",
-        "cartpole_test.h": "c",
-        "inference.h": "c",
-        "decision.h": "c",
-        "nar.h": "c"
+        "cartpole_test.h": "c"
     }
 }

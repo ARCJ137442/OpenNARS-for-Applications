@@ -73,6 +73,7 @@ typedef struct
     Operation op[MAX_COMPOUND_OP_LEN];
     Term arguments[MAX_COMPOUND_OP_LEN];
     Implication missing_specific_implication;
+    Implication specific_implication;
     Implication usedContingency;
     Event *reason;
     int tableIndex;
@@ -84,7 +85,7 @@ typedef Event (*F_AddInputBelief)(Term);
 //execute decision
 void Decision_Execute(long currentTime, Decision *decision, F_AddInputBelief AddInputBelief);
 //assumption of failure, also works for "do nothing operator"
-void Decision_Anticipate(int operationID, Term op_term, long currentTime);
+void Decision_Anticipate(int operationID, Term op_term, bool declarative, long currentTime);
 //NAR decision making rule applying when goal is an operation
 Decision Decision_Suggest(Concept *goalconcept, Event *goal, long currentTime);
 //Better decision pair:

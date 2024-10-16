@@ -76,12 +76,12 @@ Event NAR_AddInputGoal(Term term)
     return NAR_AddInput(term, EVENT_TYPE_GOAL, NAR_DEFAULT_TRUTH, false, 0);
 }
 
-void NAR_AddOperation(char *term_name, Action procedure)
+void NAR_AddOperation(char *operator_name, Action procedure)
 {
     assert(procedure != 0, "Cannot add an operation with null-procedure");
     assert(initialized, "NAR not initialized yet, call NAR_INIT first!");
-    Term term = Narsese_AtomicTerm(term_name);
-    assert(term_name[0] == '^', "This atom does not belong to an operator!");
+    Term term = Narsese_AtomicTerm(operator_name);
+    assert(operator_name[0] == '^', "This atom does not belong to an operator!");
     //check if term already exists
     int existing_k = Memory_getOperationID(&term);
     //use the running k if not existing yet
@@ -220,8 +220,9 @@ void NAR_AddInputNarsese2(char *narsese_sentence, bool queryCommand, double answ
                     {
                         NAR_PrintAnswer(c->belief_spike.stamp, c->belief_spike.term, c->belief_spike.truth, c->belief_spike.occurrenceTime, c->belief_spike.creationTime);
                     }
-                    if( Truth_Expectation(potential_best_truth) >  Truth_Expectation(best_truth_projected) || //look at occurrence time in case it's too far away to make a numerical distinction after truth projection:
-                       (Truth_Expectation(potential_best_truth) == Truth_Expectation(best_truth_projected) && c->belief_spike.occurrenceTime > answerOccurrenceTime))
+                    if( Truth_Expectation(potential_best_truth) >  Truth_Expectation(best_truth_projected) || //user higher one when projected to now
+                        (Truth_Expectation(c->belief_spike.truth) > Truth_Expectation(best_truth) && c->belief_spike.occurrenceTime == answerOccurrenceTime) || //check if one is higher if of same occurrence time
+                       (Truth_Expectation(potential_best_truth) == Truth_Expectation(best_truth_projected) && c->belief_spike.occurrenceTime > answerOccurrenceTime)) //look at occurrence time only in case it's too far away to make a numerical distinction after truth projection:
                     {
                         best_stamp = c->belief_spike.stamp;
                         best_truth_projected = potential_best_truth;
