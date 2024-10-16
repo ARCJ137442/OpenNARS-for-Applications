@@ -334,6 +334,34 @@ static void Cycle_ProcessAndInferGoalEvents(long currentTime, int layer)
                         }
                     }
                 }
+                if(DECLARATIVE_IMPLICATIONS_SUBGOALING)
+                {
+                    for(int j=0; j<c->implication_links.itemsAmount; j++)
+                    {
+                        Implication *imp = &c->implication_links.array[j];
+                        if(!Memory_ImplicationValid(imp))
+                        {
+                            Table_Remove(&c->implication_links, j);
+                            j--;
+                            continue;
+                        }
+                        Term postcondition = Term_ExtractSubterm(&imp->term, 2);
+                        Substitution subs = Variable_Unify(&postcondition, &c->goal_spike.term);
+                        if(subs.success)
+                        {
+                            Implication updated_imp = *imp;
+                            bool success;
+                            updated_imp.term = Variable_ApplySubstitute(updated_imp.term, subs, &success);
+                            if(success)
+                            {
+                                Event newGoal = Inference_GoalDeduction(&c->goal_spike, &updated_imp, currentTime);
+                                Event newGoalUpdated = Inference_EventUpdate(&newGoal, currentTime);
+                                IN_DEBUG( fputs("derived goal ", stdout); Narsese_PrintTerm(&newGoalUpdated.term); puts(""); )
+                                Memory_AddEvent(&newGoalUpdated, currentTime, selectedGoalsPriority[i] * Truth_Expectation(newGoalUpdated.truth), false, true, false, layer);
+                            }
+                        }
+                    }
+                }
             }
         })
     }
@@ -561,7 +589,7 @@ void Cycle_ProcessBeliefEvents(long currentTime)
                                 }
                                 if(is_op_seq && selectedBeliefsPriority[h] >= 1.0)
                                 {
-                                    Decision_Anticipate(op_id, seq.term, currentTime); //collection of negative evidence, new way
+                                    Decision_Anticipate(op_id, seq.term, false, currentTime); //collection of negative evidence, new way
                                 }
                             }
                         }
@@ -570,7 +598,7 @@ void Cycle_ProcessBeliefEvents(long currentTime)
             }
             if(selectedBeliefsPriority[h] >= 1.0) //only if input has been received
             {
-                Decision_Anticipate(op_id, op_term, currentTime); //collection of negative evidence, new way
+                Decision_Anticipate(op_id, op_term, false, currentTime); //collection of negative evidence, new way
             }
         }
     }
@@ -782,6 +810,12 @@ void Cycle_Perform(long currentTime)
     Cycle_PopEvents(selectedBeliefs, selectedBeliefsPriority, &beliefsSelectedCnt, &cycling_belief_events, BELIEF_EVENT_SELECTIONS);
     //2a. Process incoming belief events from FIFO, building implications utilizing input sequences
     Cycle_ProcessBeliefEvents(currentTime);
+    //2c. Declarative inference new way in each cycle
+    if(DECLARATIVE_IMPLICATIONS_CYCLE_PROCESS)
+    {
+        Term not_used = {0};
+        Decision_Anticipate(0, not_used, true, currentTime);
+    }
     for(int layer=0; layer<CYCLING_GOAL_EVENTS_LAYERS; layer++)
     {
         //1b. Retrieve BELIEF/GOAL_EVENT_SELECTIONS events from cyclings events priority queue (which includes both input and derivations)
@@ -789,7 +823,7 @@ void Cycle_Perform(long currentTime)
         //2b. Process incoming goal events, propagating subgoals according to implications, triggering decisions when above decision threshold
         Cycle_ProcessAndInferGoalEvents(currentTime, layer);
     }
-    //4. Perform inference between in 1. retrieved events and semantically/temporally related, high-priority concepts to derive and process new events
+    //4a. Perform inference between in 1. retrieved events and semantically/temporally related, high-priority concepts to derive and process new events
     Cycle_Inference(currentTime);
     //5. Apply relative forgetting for concepts according to CONCEPT_DURABILITY and events according to BELIEF_EVENT_DURABILITY
     Cycle_RelativeForgetting(currentTime);

@@ -204,5 +204,9 @@
 #define FUNCTIONAL_EQUIVALENCE_NONTEMPORAL_EXP 0.5
 //Whether functional equivalence should simplify sequences taking out common conditions
 #define FUNCTIONAL_EQUIVALENCE_SIMPLIFY true
+//Declarative implications process per cycle rather than just per event
+#define DECLARATIVE_IMPLICATIONS_CYCLE_PROCESS true
+//Declarative implications allow subgoaling
+#define DECLARATIVE_IMPLICATIONS_SUBGOALING true
 
 #endif
