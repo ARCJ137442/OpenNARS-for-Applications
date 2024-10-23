@@ -31,6 +31,8 @@
         "sequence_test.h": "c",
         "pong_test.h": "c",
         "testchamber_test.h": "c",
-        "cartpole_test.h": "c"
+        "cartpole_test.h": "c",
+        "occurrencetimeindex.h": "c",
+        "invertedatomindex.h": "c"
     }
 }

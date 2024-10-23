@@ -34,7 +34,7 @@ void OccurrenceTimeIndex_Test()
     }
     for(int i=0; i<OCCURRENCE_TIME_INDEX_SIZE; i++)
     {
-        assert(OCCURRENCE_TIME_INDEX_SIZE-i == (long) fifo.array[i], "Item at OccurrenceTimeIndex position has to be right");
+        assert(i+1 == (long) OccurrenceTimeIndex_GetKthNewestElement(&fifo, i), "Item at OccurrenceTimeIndex position has to be right");
     }
     assert(fifo.itemsAmount == OCCURRENCE_TIME_INDEX_SIZE, "OccurrenceTimeIndex size differs");
     puts("<<OccurrenceTimeIndex Test successful");
